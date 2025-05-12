@@ -155,7 +155,28 @@ $\alpha_{d}$ -- константа нормализации (здесь и да�
     \end{cases} 
 \end{equation}
 
-Для решения проблемы кластеризации (неустойчивости при растяжении, tensile instability) используется следующее ядро~\cite{Desbrun1996, Muller2003, Khrapov2017}:
+Ещё одной функцией, которая получила широкое применение в недавних работах~\cite{Dao2011,Dao2013,Altomare2017,Dominguez2019}, стала функция Вендланда~\cite{Wendland1995}, 
+которая близка к кубическому сплайну, но обладает одним сегментом:
+%
+\begin{equation}
+    W = \alpha_{d}
+    \begin{cases}
+      \begin{tabular}{l l}
+          $\left( 1 - \frac{q}{2} \right)^{4} (2q + 1)$
+          &
+          для $q < 2$
+          
+          \\
+          
+          0
+          &
+          для $q \geq 2$.
+      \end{tabular}
+    \end{cases}
+\end{equation}
+
+Для решения проблемы кластеризации (неустойчивости при растяжении, tensile instability) 
+используется следующее ядро для расчёта ускорения, связанного с давлением~\cite{Desbrun1996, Muller2003, Khrapov2017}:
 %
 \begin{equation}\label{eq:w_desbrun}
     W = \alpha_{d}
@@ -169,10 +190,12 @@ $\alpha_{d}$ -- константа нормализации (здесь и да�
           
           0
           &
-          для $q \geq 2$
+          для $q \geq 2$.
       \end{tabular}  
     \end{cases} 
 \end{equation}
+%
+Особенностью данной функции является то, что её градиент не стремится к нулю в центре.
 
 
 \FloatBarrier
