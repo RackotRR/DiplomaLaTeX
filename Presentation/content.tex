@@ -1,20 +1,29 @@
-\section{Списки}
 \begin{frame}[plain, noframenumbering]
     \begin{center}
         \Huge
-        Списки
+        Моделирование гидродинамики методом сглаженных частиц
     \end{center}
 \end{frame}
 
-\subsection{Нумерованные}
-
 \begin{frame}
-    \frametitle{Нумерованные списки}
-    \begin{enumerate}
-        \item один
-        \item два
-        \item три
-    \end{enumerate}
+    \frametitle{Основные уравнения гидродинамики}
+
+    Уравнения Навье-Стокса для вязкой сжимаемой жидкости
+    \begin{itemize}
+        \item Уравнение непрерывности:
+        \begin{equation}
+            \frac{\partial \rho}{\partial t} + \nabla \cdot (\rho \vec{v}) = 0
+        \end{equation}
+        %
+        \item Уравнение импульса:
+        \begin{equation}
+            \rho \left( \frac{\partial \vec{v}}{\partial t} + \vec{v} \cdot \nabla \vec{v} \right)
+                = -\nabla p + \nabla \cdot \tau + \vec{f}
+        \end{equation}
+        %
+        \item Уравнение энергии не используется
+        \item Неявный член $\nabla \cdot \tau$ для модели SPH
+    \end{itemize}
 \end{frame}
 \note{
     Этот текст будет виден только если его отображение включено
@@ -24,15 +33,76 @@
     \textit{pdf-presenter-console}.
 }
 
-\subsection{Не нумерованные}
+\begin{frame}
+    \frametitle{Метод Weakly Compressible SPH}
 
+    Основные идеи метода SPH и его версии WCSPH.
+
+    \begin{itemize}
+        \item Аппроксимация функций и производных с помощью сглаживания:
+        \begin{equation}\label{eq:sph_approx}
+            f(\vec{r}_{i}) = \sum\limits_{j} \frac{m_{j}}{\rho_{j}} f(\vec{r}_{j}) W_{ij}
+        \end{equation}
+        \begin{equation}
+            \nabla\cdot f(\vec{r}_{i}) = \sum\limits_{j} \frac{m_{j}}{\rho_{j}} f(\vec{r}_{j}) \cdot \nabla_{i} W_{ij},
+        \end{equation}
+        \item Сглаживающее ядро:
+        \begin{equation}\label{eq:wendland}
+            W = \alpha_{d}
+            \begin{cases}
+            \begin{tabular}{l l}
+                $\left( 1 - \frac{q}{2} \right)^{4} (2q + 1)$
+                &
+                для $q < 2$
+                
+                \\
+                
+                0
+                &
+                для $q \geq 2$
+            \end{tabular}
+            \end{cases}
+        \end{equation}
+
+        \item Искусственное уравнение состояния:
+        \begin{equation}
+            p = \frac{c_{0}^{\,2}\rho_{0}}{\gamma}\left( \left( \frac{\rho}{\rho_{0}} \right)^{\gamma} - 1 \right)
+        \end{equation}
+    \end{itemize}
+\end{frame}
 
 \begin{frame}
-    \frametitle{Перечисления}
+    \frametitle{Дискретизация уравнений сохранения}
     \begin{itemize}
-        \item Проблема 1
-        \item Проблема 2
-        \item Проблема 3
+        \item Уравнение непрерывности:
+        \begin{equation}
+            \frac{d\rho_{i}}{dt} = \sum\limits_{j}m_{j}\vec{v}_{ij}\cdot\nabla_{i}W_{ij}
+        \end{equation}
+
+        \item Уравнение импульса:
+        \begin{equation}
+            \frac{d\Vec{v}_i}{d t} = -\sum\limits_{j} m_{j} 
+                \left(\frac{p_{j}}{\rho_{j}^{2}} + \frac{p_{i}}{\rho_{i}^{2}} + \Pi_{ij} \right) 
+                \nabla_{i} W_{ij} + \vec{f}
+        \end{equation}
+
+        \item Искусственная вязкость:
+        %
+        \begin{equation}\label{eq:art_visc}
+            \Pi_{ij} = 
+            \begin{cases}
+            \begin{tabular}{l l}
+                $-\displaystyle\frac{\alpha\bar c_{ij}}{\bar\rho_{ij}} \, 
+                \left(
+                    \frac{h\vec{v}_{ij} \cdot \vec{r}_{ij}}{\vec{r}_{ij}^{\;2} + 0.01h^{2}}
+                \right)$ &
+                для $\vec{v}_{ij} \cdot \vec{r}_{ij} < 0$, \\
+                
+                0 &
+                для $\vec{v}_{ij} \cdot \vec{r}_{ij} \geq 0$
+            \end{tabular}  
+            \end{cases}
+        \end{equation}
     \end{itemize}
 \end{frame}
 \note[itemize]{
@@ -41,29 +111,40 @@
     \item Тезис 3
 }
 
-\subsection{Комбинированные}
+\begin{frame}[plain, noframenumbering]
+    \begin{center}
+        \Huge
+        Реализация ПО для моделирования движения движения жидкости методом SPH
+    \end{center}
+\end{frame}
+
 
 \begin{frame}
-    \frametitle{Комбинация списков}
-    \begin{enumerate}
-        \item \textbf{Задача 1}
-              \begin{itemize}
-                  \item Подзадача 1-1
-                  \item Подзадача 1-2
-              \end{itemize}
-        \item \textbf{Задача 2}
-              \begin{itemize}
-                  \item Подзадача 2-1
-                  \item Подзадача 2-2
-                  \item Подзадача 2-3
-              \end{itemize}
-        \item \textbf{Задача 3}
-              \begin{itemize}
-                  \item Подзадача 3-1
-                  \item Подзадача 3-2
-                  \item Подзадача 3-3
-              \end{itemize}
-    \end{enumerate}
+    \frametitle{Состав разработанного комплекса ПО}
+    \begin{itemize}
+        \item вычислительные модули:
+            \begin{itemize}
+                \item \textbf{RRSPH\_CL} --- ускорение с OpenCL
+                \item \textbf{RRSPH\_OMP} --- ускорение с OpenMP
+            \end{itemize}
+        \item модули визуализации:
+            \begin{itemize}
+                \item \textbf{SPH2D\_Drawer} --- 2D-визуализация
+                \item \textbf{Scatter3D} --- 3D-визуализация
+            \end{itemize}
+        \item аналитический модуль:
+            \begin{itemize}
+                \item \textbf{FuncAtPoint} --- анализ характеристик поля
+                \item \textbf{WaterProfile} --- реконструкция поверхности жидкости
+            \end{itemize}
+        \item модуль подготовки расчётов:
+            \begin{itemize}
+                \item \textbf{RRSPH\_GUI} --- интерфейс для настройки параметров модели
+                \item скрипты генерации входных данных
+                \item скрипт экспорта проектов DualSPHysics
+            \end{itemize}
+    \end{itemize}
+    
 \end{frame}
 \note[itemize]{
     \item Задача 1
@@ -71,31 +152,86 @@
     \item Задача 3
 }
 
-\begin{frame}[allowframebreaks]
-    \frametitle{Разделение слайда}
-    Поясняющий текст
-    \begin{itemize}
-        \item Один
-        \item Два
-        \item Три
-    \end{itemize}
-    \framebreak
-    Продолжение предыдущего слайда
-\end{frame}
-
-\section{Графика}
 \begin{frame}[plain, noframenumbering]
     \begin{center}
         \Huge
-        Графика
+        Численные эксперименты и анализ
     \end{center}
 \end{frame}
 
+\begin{frame}
+    \frametitle{Анализ эффективности}
+
+    \begin{itemize}
+        \item Ускорение параллельных вычислений
+        \begin{equation}
+            S(M) = \frac{T(1)}{T(M)}
+        \end{equation}
+
+        \item Эффективность параллельных вычислений
+        \begin{equation}
+            E(M) = \frac{S(M)}{M}
+        \end{equation}
+    \end{itemize}
+
+
+    \bigskip
+    \hrule{}
+    \bigskip
+
+    Оборудование:
+    \begin{itemize}
+        \item CPU Intel Core i9-13900F: 8 P-cores + 16 E-cores
+        \item GPU NVidia RTX 4070 Ti: 7680 cuda-ядер
+    \end{itemize}
+\end{frame}
 
 \begin{frame}
-    \frametitle{Одиночное изображение}
+    \frametitle{Анализ эффективности. Ускорение}
+    \centering{Зависимость ускорения ($S(M) = T(1) / T(M)$) расчёта от количества потоков $M$}
+    \center{\includegraphics[height=0.75\textheight]{images/Speedup.png}}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Анализ эффективности. Эффективность}
+    \centering{Зависимость эффективности распараллеливания ($E(M) = S(M) / M$) расчёта от количества потоков $M$}
+    \center{\includegraphics[height=0.75\textheight]{images/Efficiency.png}}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Анализ эффективности. Результаты}
+
     \centering
-    \includegraphics[width=0.8\linewidth]{latex} % окружение figure не требуется
+    Ускорение при расчёте 100 шагов по времени различными вычислителями по отношению к однопоточной версии на CPU
+    \vfill
+    \begin{tabular}{|l|l|l|}
+        \hline
+        & CPU & GPU \\
+        \hline
+        float (32 бит) & 11.9 & 23.2 \\
+        \hline
+        double (64 бит) & 14.5 & 14.1 \\
+        \hline
+    \end{tabular}
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Расчёт линейных волн. Дисперсионное соотношение}
+
+    \centering
+    Ускорение при расчёте 100 шагов по времени различными вычислителями по отношению к однопоточной версии на CPU
+    \vfill
+    \begin{tabular}{|l|l|l|}
+        \hline
+        & CPU & GPU \\
+        \hline
+        float (32 бит) & 11.9 & 23.2 \\
+        \hline
+        double (64 бит) & 14.5 & 14.1 \\
+        \hline
+    \end{tabular}
+
 \end{frame}
 
 \begin{frame}

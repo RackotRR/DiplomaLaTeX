@@ -19,6 +19,7 @@
 \setbeamerfont{author}{size=\normalsize}
 \setbeamerfont{institute}{size=\small}
 \setbeamerfont{date}{size=\normalsize}
+\setbeamerfont{footline}{size=\scriptsize}
 \setbeamerfont{bibliography item}{size=\small}
 \setbeamerfont{bibliography entry author}{size=\small}
 \setbeamerfont{bibliography entry title}{size=\small}
@@ -62,15 +63,15 @@
 \setbeamertemplate{footline}{
     \leavevmode%
     \hbox{%
-        \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{}%
+        \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=2ex,center]{}%
             % И. О. Фамилия, Организация кратко
             \thesisAuthorShort, \thesisOrganizationShort
         \end{beamercolorbox}%
-        \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{}%
+        \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=2ex,center]{}%
             % Город, 20XX
             \thesisCity, \thesisYear
         \end{beamercolorbox}%
-        \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,right]{}%
+        \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=2ex,right]{}%
             Стр. \insertframenumber{} из \inserttotalframenumber \hspace*{2ex}
         \end{beamercolorbox}}%
     \vskip0pt%
